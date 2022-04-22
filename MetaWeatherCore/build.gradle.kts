@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.serialization")
     id("com.android.library")
 }
 
@@ -21,11 +22,13 @@ kotlin {
     }
 
     sourceSets {
-        val ktorVersion = "2.0.0"
 
         val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-core:${properties["version.ktor"]}")
+                implementation("io.ktor:ktor-client-cio:${properties["version.ktor"]}")
+                implementation("io.ktor:ktor-client-content-negotiation:${properties["version.ktor"]}")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:${properties["version.ktor"]}")
             }
         }
         val commonTest by getting {
@@ -35,7 +38,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+                implementation("io.ktor:ktor-client-okhttp:${properties["version.ktor"]}")
             }
         }
         val androidTest by getting
@@ -48,7 +51,7 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+                implementation("io.ktor:ktor-client-darwin:${properties["version.ktor"]}")
             }
         }
         val iosX64Test by getting

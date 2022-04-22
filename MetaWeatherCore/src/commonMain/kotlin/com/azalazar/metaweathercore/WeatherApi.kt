@@ -1,16 +1,25 @@
 package com.azalazar.metaweathercore
 
-import io.ktor.client.*
+import com.azalazar.metaweathercore.entities.WeatherLocation
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import kotlin.collections.get
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 
 class WeatherApi {
-    private val client = HttpClient()
-    suspend fun locationSearch(): String {
-        val response = client.get("$baseUrl/search/?query=buenos")
-        return response.bodyAsText()
+
+    private val httpClient = httpClient() {
+        install(ContentNegotiation) {
+            json(Json { isLenient = true; ignoreUnknownKeys = true })
+        }
     }
+
+    @Throws(Throwable::class)
+    suspend fun locationSearch(query: String): List<WeatherLocation> {
+        return httpClient.get("$baseUrl/search/?query=${query}").body()
+    }
+
     companion object {
         private const val baseUrl = "https://www.metaweather.com/api/location"
     }
